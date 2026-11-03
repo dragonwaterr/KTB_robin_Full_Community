@@ -3,8 +3,18 @@
 
 ## 개요
 **소셜 피드 백엔드. 로그인/회원가입, 게시글/댓글/좋아요, 프로필 편집**을 제공하는 개인 프로젝트입니다.
-- 개발기간: 25.09.22 ~
+- 개발기간: 2025.09.22 ~ 2025.12.28
+- 개선 작업: 2026.11 ~
 - 개발인원: 1명
+- 원본 저장소: [100-hours-a-week/KTB_robin_Full_Community](https://github.com/100-hours-a-week/KTB_robin_Full_Community)
+
+<sub>※ 패키지명 `week4`와 `Week4Application`은 초기 개발 단계의 이름으로, 이력 보존을 위해 그대로 두었습니다.</sub>
+
+## 개선 기록 (2026.11 ~)
+| 날짜 | 내용 | PR |
+|---|---|---|
+| 2026-11-03 | 빌드 복구: 2025-12 커밋에서 누락·삭제된 클래스와 메서드 복원 | [#1](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/1) |
+| 2026-11-03 | JWT 서명 키를 코드에서 환경 변수로 분리 | [#2](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/2) |
 
 ## 제공 기능
 - 🔐 JWT 로그인/리프레시, 로그아웃
