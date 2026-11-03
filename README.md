@@ -21,5 +21,15 @@
 - JWT(JJWT) 기반 인증, Lombok
 - Swagger/OpenAPI 3
 
+## 실행 환경 변수
+| 변수 | 설명 |
+|---|---|
+| `DB_URL` | MySQL 접속 URL (예: `jdbc:mysql://localhost:3306/<DB명>`) |
+| `DB_PASSWORD` | MySQL root 비밀번호 |
+| `JWT_ACCESS_SECRET` | 액세스 토큰 서명 키 (Base64, 256비트 이상) |
+| `JWT_REFRESH_SECRET` | 리프레시 토큰 서명 키 (Base64, 256비트 이상, 액세스 키와 다른 값) |
+
+서명 키는 `openssl rand -base64 32` 로 각각 생성합니다.
+
 ## ERD
 ![그나저나 ERD](ERD_그나저나_robin.png)

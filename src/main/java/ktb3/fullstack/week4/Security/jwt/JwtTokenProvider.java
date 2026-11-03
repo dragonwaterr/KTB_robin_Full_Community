@@ -10,6 +10,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,9 +27,6 @@ import java.util.Optional;
 @Component
 public class JwtTokenProvider {
 
-    private static final String ACCESS_SECRET_BASE64 = "MzQ2N2I2MjM2YzU2YzQzYjY5MzY5NzNhMzQ2N2I2MjM2YzU2YzQzYjY5MzY5NzNh"; // 예시 base64
-    private static final String REFRESH_SECRET_BASE64 = "N2M2MzYzNDM2YzU2MzQzYjY5MzY5NzNhN2M2MzYzNDM2YzU2MzQzYjY5MzY5NzNh"; // 예시 base64
-
     // 유효기간(초)
     private static final long ACCESS_EXPIRE_SECONDS = 60L * 60L;         // 1시간
     private static final long REFRESH_EXPIRE_SECONDS = 60L * 60L * 24L * 7L; // 7일
@@ -38,9 +36,14 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
-    public JwtTokenProvider(UserDetailsService userDetailsService) {
-        this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(ACCESS_SECRET_BASE64));
-        this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(REFRESH_SECRET_BASE64));
+    // 서명 키는 코드에 두지 않고 환경 변수(JWT_ACCESS_SECRET, JWT_REFRESH_SECRET)로 주입한다.
+    // HS256 서명에는 256비트 이상의 키가 필요하다 (예: openssl rand -base64 32).
+    public JwtTokenProvider(
+            @Value("${jwt.access-secret}") String accessSecretBase64,
+            @Value("${jwt.refresh-secret}") String refreshSecretBase64,
+            UserDetailsService userDetailsService) {
+        this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecretBase64));
+        this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecretBase64));
         this.userDetailsService = userDetailsService;
     }
 
