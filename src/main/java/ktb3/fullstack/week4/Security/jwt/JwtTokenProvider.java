@@ -79,6 +79,10 @@ public class JwtTokenProvider {
         return validate(token, accessKey);
     }
 
+    public boolean validateRefreshToken(String token) {
+        return validate(token, refreshKey);
+    }
+
     private boolean validate(String token, Key key) {
         try {
             Jwts.parser().verifyWith((SecretKey) key).build().parseSignedClaims(token);
