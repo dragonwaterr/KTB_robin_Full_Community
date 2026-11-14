@@ -7,6 +7,7 @@
 - 개선 작업: 2026.11 ~
 - 개발인원: 1명
 - 원본 저장소: [100-hours-a-week/KTB_robin_Full_Community](https://github.com/100-hours-a-week/KTB_robin_Full_Community)
+- 문서: [docs/](docs/README.md) — 아키텍처, ERD
 
 <sub>※ 패키지명 `week4`와 `Week4Application`은 초기 개발 단계의 이름으로, 이력 보존을 위해 그대로 두었습니다.</sub>
 
