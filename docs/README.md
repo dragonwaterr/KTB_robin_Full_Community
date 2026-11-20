@@ -15,3 +15,12 @@
 | [spec/domain/comment.md](spec/domain/comment.md) | 댓글 등록, 목록(커서), 수정, 삭제 |
 | [spec/domain/like.md](spec/domain/like.md) | 좋아요 추가·취소 |
 | [spec/domain/image.md](spec/domain/image.md) | 프로필·게시글 이미지, 프로필 이미지 교체 흐름 |
+
+## 설계 결정
+
+| 문서 | 내용 |
+|---|---|
+| [spec/technicalDecision/rest-api.md](spec/technicalDecision/rest-api.md) | 수정 메서드, `data: null`, 게시글 목록 커서, 코드 리뷰 피드백 반영 |
+| [spec/technicalDecision/erd-redesign.md](spec/technicalDecision/erd-redesign.md) | 생성·수정 일시, soft delete, 사진 테이블 분리, 좋아요 대리키·상태 컬럼 |
+| [spec/technicalDecision/soft-delete-query.md](spec/technicalDecision/soft-delete-query.md) | 삭제된 행을 거르는 조회 방식 (`@SQLRestriction`) |
+| [spec/technicalDecision/user-delete-facade.md](spec/technicalDecision/user-delete-facade.md) | 회원 탈퇴 Facade 분리, `Propagation.MANDATORY` |
