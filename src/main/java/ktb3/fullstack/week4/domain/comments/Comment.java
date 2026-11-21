@@ -18,7 +18,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class Comment extends SoftDeletetionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "content")

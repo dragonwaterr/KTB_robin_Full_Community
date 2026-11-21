@@ -18,7 +18,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class Like extends SoftDeletetionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "is_liked")

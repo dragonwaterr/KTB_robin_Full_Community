@@ -1,10 +1,9 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
-
 CREATE TABLE `comment` (
   `deleted` bit(1) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `modified_at` datetime(6) NOT NULL,
   `post_id` bigint DEFAULT NULL,
   `user_id` bigint DEFAULT NULL,
@@ -15,14 +14,11 @@ CREATE TABLE `comment` (
   CONSTRAINT `FKqm52p1v3o13hy268he0wcngr5` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FKs1slvnkuemjsq2kj4h3vhx7i1` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE TABLE `comment_seq` (
-  `next_val` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `likes` (
   `deleted` bit(1) DEFAULT NULL,
   `is_liked` bit(1) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `modified_at` datetime(6) NOT NULL,
   `post_id` bigint DEFAULT NULL,
   `user_id` bigint DEFAULT NULL,
@@ -32,13 +28,10 @@ CREATE TABLE `likes` (
   CONSTRAINT `FKnvx9seeqqyy71bij291pwiwrg` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FKowd6f4s7x9f3w50pvlo6x3b41` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE TABLE `likes_seq` (
-  `next_val` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `post` (
   `deleted` bit(1) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `modified_at` datetime(6) NOT NULL,
   `user_id` bigint DEFAULT NULL,
   `content` varchar(255) DEFAULT NULL,
@@ -52,7 +45,7 @@ CREATE TABLE `post_image` (
   `display_order` int DEFAULT NULL,
   `is_primary` bit(1) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `modified_at` datetime(6) NOT NULL,
   `post_id` bigint DEFAULT NULL,
   `image_url` varchar(255) DEFAULT NULL,
@@ -60,12 +53,6 @@ CREATE TABLE `post_image` (
   UNIQUE KEY `UKp847rtpffsryx3932y7o6ko8y` (`image_url`),
   KEY `FKsip7qv57jw2fw50g97t16nrjr` (`post_id`),
   CONSTRAINT `FKsip7qv57jw2fw50g97t16nrjr` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE TABLE `post_image_seq` (
-  `next_val` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE TABLE `post_seq` (
-  `next_val` bigint DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `post_view` (
   `created_at` datetime(6) NOT NULL,
@@ -80,7 +67,7 @@ CREATE TABLE `profile_image` (
   `display_order` int DEFAULT NULL,
   `is_primary` bit(1) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `modified_at` datetime(6) NOT NULL,
   `user_id` bigint DEFAULT NULL,
   `image_url` varchar(255) DEFAULT NULL,
@@ -89,23 +76,17 @@ CREATE TABLE `profile_image` (
   KEY `FKsbiasd8poxtjj1pr99oi0rrx5` (`user_id`),
   CONSTRAINT `FKsbiasd8poxtjj1pr99oi0rrx5` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE TABLE `profile_image_seq` (
-  `next_val` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `refresh_token` (
   `expires_at` datetime(6) DEFAULT NULL,
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint DEFAULT NULL,
   `token_string` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE TABLE `refresh_token_seq` (
-  `next_val` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE `users` (
   `deleted` bit(1) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
-  `id` bigint NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `modified_at` datetime(6) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
   `hashed_password` varchar(255) DEFAULT NULL,
@@ -115,17 +96,5 @@ CREATE TABLE `users` (
   UNIQUE KEY `UK6dotkott2kjsp8vw4d0m25fb7` (`email`),
   UNIQUE KEY `UK2ty1xmrrgtn89xt7kyxx6ta7h` (`nickname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE TABLE `users_seq` (
-  `next_val` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
-INSERT INTO `comment_seq` VALUES (1);
-INSERT INTO `likes_seq` VALUES (1);
-INSERT INTO `post_image_seq` VALUES (1);
-INSERT INTO `post_seq` VALUES (1);
-INSERT INTO `profile_image_seq` VALUES (1);
-INSERT INTO `refresh_token_seq` VALUES (1);
-INSERT INTO `users_seq` VALUES (1);
 
 SET FOREIGN_KEY_CHECKS = 1;

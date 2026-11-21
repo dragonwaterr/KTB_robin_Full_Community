@@ -26,7 +26,7 @@ import java.util.List;
 public class Post extends SoftDeletetionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
