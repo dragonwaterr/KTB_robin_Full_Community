@@ -25,3 +25,4 @@
 | [spec/technicalDecision/soft-delete-query.md](spec/technicalDecision/soft-delete-query.md) | 삭제된 행을 거르는 조회 방식 (`@SQLRestriction`) |
 | [spec/technicalDecision/user-delete-facade.md](spec/technicalDecision/user-delete-facade.md) | 회원 탈퇴 Facade 분리, `Propagation.MANDATORY` |
 | [spec/technicalDecision/soft-delete-unique.md](spec/technicalDecision/soft-delete-unique.md) | 탈퇴 회원 값의 재사용 정책, 중복 검사 범위, UNIQUE 위반 409 |
+| [spec/technicalDecision/id-generation.md](spec/technicalDecision/id-generation.md) | 동시 쓰기 커넥션 풀 교착 원인, 기본키 생성 전략 `SEQUENCE` → `IDENTITY` |

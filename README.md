@@ -17,6 +17,7 @@
 | 2026-11-03 | 빌드 복구: 2025-12 커밋에서 누락·삭제된 클래스와 메서드 복원 | [#1](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/1) |
 | 2026-11-03 | JWT 서명 키를 코드에서 환경 변수로 분리 | [#2](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/2) |
 | 2026-11-21 | 탈퇴 회원 이메일·닉네임 재사용과 동시 가입이 500 대신 409로 응답 (동시 가입 N=100: 500×99 → 409×99) | [#9](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/9) |
+| 2026-11-21 | 기본키 생성 전략을 IDENTITY로 바꿔 동시 쓰기 시 커넥션 풀 교착 제거 (기본 풀, 동시 가입 N=100: 500×91 → 0) | [#10](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/10) |
 
 ## 제공 기능
 - 🔐 JWT 로그인/리프레시, 로그아웃
