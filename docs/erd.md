@@ -111,7 +111,7 @@ erDiagram
 ```
 
 - 다이어그램의 타입은 엔티티 필드의 Java 타입을 단순화한 것이다. 길이는 엔티티에 명시된 `users.role`(`VARCHAR(10)`)과 시간 컬럼(`DATETIME(6)`)만 적었다.
-- 기본키는 모든 엔티티가 `@GeneratedValue(strategy = GenerationType.SEQUENCE)`다. `PostView`는 `@MapsId`로 `Post`의 기본키를 그대로 쓴다.
+- 기본키는 `PostView`를 제외한 모든 엔티티가 `@GeneratedValue(strategy = GenerationType.IDENTITY)`(MySQL `AUTO_INCREMENT`)다. `PostView`는 `@MapsId`로 `Post`의 기본키를 그대로 쓴다.
 - `post_view`의 기본키 컬럼 이름은 엔티티 매핑만으로는 확정하지 않았다. 다이어그램의 `post_id`는 연결 대상을 나타낸다.
 - 연관관계는 모두 `@ManyToOne(fetch = LAZY)`이고 `@JoinColumn`으로 `user_id`·`post_id`를 지정한다. `Post#postView`는 `@OneToOne(mappedBy = "post", fetch = LAZY)`다.
 - `RefreshToken#userId`는 `Long` 컬럼이고 `User`와의 연관관계 매핑이 없다.
