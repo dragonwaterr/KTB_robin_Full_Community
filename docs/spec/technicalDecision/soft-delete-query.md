@@ -34,3 +34,4 @@ soft delete를 도입한 뒤, 조회에서 삭제된 행을 거르는 방법을 
 - `User`, `Post`, `Comment`, `Like`, `ProfileImage`, `PostImage` 엔티티에 `@SQLRestriction("deleted = false")`
 - 컬렉션 필드에도 같은 어노테이션을 선언했다: `User#profileImages`, `Post`의 `postImages`·`comments`·`likes`
 - 삭제는 `SoftDeletetionEntity#deleteEntity`가 `deleted = true`로 바꾼다
+- 중복 검사(`UserRepository#existsByEmail`·`#existsByNickname`)는 탈퇴 회원까지 보도록 네이티브 쿼리를 쓴다([soft-delete-unique.md](soft-delete-unique.md))

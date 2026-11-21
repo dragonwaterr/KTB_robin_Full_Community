@@ -24,3 +24,4 @@
 | [spec/technicalDecision/erd-redesign.md](spec/technicalDecision/erd-redesign.md) | 생성·수정 일시, soft delete, 사진 테이블 분리, 좋아요 대리키·상태 컬럼 |
 | [spec/technicalDecision/soft-delete-query.md](spec/technicalDecision/soft-delete-query.md) | 삭제된 행을 거르는 조회 방식 (`@SQLRestriction`) |
 | [spec/technicalDecision/user-delete-facade.md](spec/technicalDecision/user-delete-facade.md) | 회원 탈퇴 Facade 분리, `Propagation.MANDATORY` |
+| [spec/technicalDecision/soft-delete-unique.md](spec/technicalDecision/soft-delete-unique.md) | 탈퇴 회원 값의 재사용 정책, 중복 검사 범위, UNIQUE 위반 409 |

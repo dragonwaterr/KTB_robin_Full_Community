@@ -39,17 +39,18 @@
   - `dto` (JSON, `JoinRequest`): `email`(`@Email`, `@NotBlank`), `password`(`@NotBlank`), `nickname`(`@NotBlank`)
   - `image`: 프로필 이미지 파일
 - 처리 로직 (`UserService#register`)
-  1. `AvailabilityService#checkRegisterAvailability` — 이메일 중복, 닉네임 중복, 이미지 검사 순서
+  1. `AvailabilityService#checkRegisterAvailability` — 이메일 중복, 닉네임 중복, 이미지 검사 순서. 중복 검사는 탈퇴 회원의 값도 포함한다(4.2)
   2. 비밀번호 인코딩, `UserDomainBuilder#buildUser`로 회원 생성
   3. 이미지 저장, `ImageDomainBuilder#buildProfileImage`로 대표 이미지 생성
   4. 프로필 이미지·회원 저장
 - 응답: `message = register_success`
-- 오류: 400 `invalid_request`(`@Valid` 실패), 409 `existing_email`, 409 `existing_nickname`, 404 `image_not_found`(이미지 없음), 400 `image_size_too_big`, 400 `file_type_omitted`, 400 `invalid_file_type`
+- 오류: 400 `invalid_request`(`@Valid` 실패), 409 `existing_email`, 409 `existing_nickname`, 409 `duplicate_resource`(동시 요청이 중복 검사를 함께 통과해 UNIQUE 제약에 걸린 경우), 404 `image_not_found`(이미지 없음), 400 `image_size_too_big`, 400 `file_type_omitted`, 400 `invalid_file_type`
 
 ### 4.2 가용성 검사 `GET /availability/email?value=`, `GET /availability/nickname?value=`
 
 - 권한: 공개
 - 처리 로직: `existsByEmail` / `existsByNickname`이 참이면 각각 `UserError.EXISTING_EMAIL` / `EXISTING_NICKNAME`
+  - 두 메서드는 네이티브 쿼리(`UserRepository`)라 `@SQLRestriction`이 붙지 않아 탈퇴 회원의 값도 "사용 중"으로 본다. 탈퇴한 이메일·닉네임은 다시 쓸 수 없다([soft-delete-unique.md](../technicalDecision/soft-delete-unique.md))
 - 응답: `message = valid_email` / `valid_nickname`
 - 오류: 409 `existing_email`, 409 `existing_nickname`
 
@@ -66,7 +67,7 @@
 - 요청 (JSON, `NicknameUpdateRequest`): `newNickname`(`@NotBlank`)
 - 처리 로직 (`UserService#changeNickname`): 회원 조회 → `checkNewNicknameAvailability` → `User#changeNickName`
 - 응답: `message = nickname_edit_success`, `data` = `NicknameUpdateResponse` (`newNickname`)
-- 오류: 400 `invalid_request`, 404 `cannot_found_user`, 409 `existing_nickname`
+- 오류: 400 `invalid_request`, 404 `cannot_found_user`, 409 `existing_nickname`, 409 `duplicate_resource`(동시 변경이 UNIQUE 제약에 걸린 경우)
 
 ### 4.5 비밀번호 변경 `PATCH /users/me/password`
 
