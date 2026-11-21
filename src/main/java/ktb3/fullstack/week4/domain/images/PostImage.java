@@ -15,7 +15,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class PostImage extends Image {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

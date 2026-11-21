@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class ProfileImage extends Image {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
