@@ -22,8 +22,8 @@ jwt:
   refresh-secret: ${JWT_REFRESH_SECRET} # Base64, 256비트 이상, access 와 다른 값
 
 file:
-  profileDir: /Users/dragonwaterr/Desktop/week4/src/main/resources/static/assets/images/profile/
-  postDir: /Users/dragonwaterr/Desktop/week4/src/main/resources/static/assets/images/post/
+  profileDir: ${FILE_PROFILEDIR}
+  postDir: ${FILE_POSTDIR}
 
 
 
