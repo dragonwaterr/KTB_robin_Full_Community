@@ -18,6 +18,9 @@ repositories {
 	mavenCentral()
 }
 
+// Boot 3.5.6 기본값(1.21.3)은 Docker API 1.32로 요청해 Docker 29(최소 1.40)에서 거부된다
+ext['testcontainers.version'] = '1.21.4'
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -40,6 +43,11 @@ dependencies {
 
     // h2 inMemory DB for test environment
     testImplementation 'com.h2database:h2'
+
+    // Testcontainers (MySQL)
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mysql'
 
     // Querydsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
