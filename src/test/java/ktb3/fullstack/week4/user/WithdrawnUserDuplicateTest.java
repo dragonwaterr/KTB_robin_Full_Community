@@ -120,6 +120,13 @@ class WithdrawnUserDuplicateTest extends MySqlContainerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void 컬럼보다_긴_닉네임은_중복_응답이_아니다() throws Exception {
+        // varchar(255)를 넘는 값은 "Data too long" → 안전망 409(duplicate_resource)로 오인하면 안 된다
+        register(unique("e") + "@test.com", "n".repeat(300))
+                .andExpect(result -> assertThat(result.getResponse().getStatus()).isNotEqualTo(409));
+    }
+
     private ResultActions register(String email, String nickname) throws Exception {
         String json = """
                 {"email":"%s","password":"Password1!","nickname":"%s"}""".formatted(email, nickname);
