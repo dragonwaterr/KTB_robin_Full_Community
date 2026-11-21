@@ -4,6 +4,8 @@ import ktb3.fullstack.week4.common.error.codes.ErrorCode;
 import ktb3.fullstack.week4.common.error.codes.GenericError;
 import ktb3.fullstack.week4.common.error.exception.ApiException;
 import ktb3.fullstack.week4.dto.common.ApiResponse;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +30,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.
                 status(GenericError.INVALID_REQUEST.getStatus()).
                 body(ApiResponse.error(GenericError.INVALID_REQUEST.getMessage()));
+    }
+
+    // 동시 요청이 중복 검사를 함께 통과해 UNIQUE 제약에서 걸린 경우의 안전망 → 409
+    // 같은 예외로 번역되는 다른 위반(값 길이 초과 등)은 500으로 둔다
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(DataIntegrityViolationException e) {
+        if (e.getCause() instanceof ConstraintViolationException cve
+                && cve.getKind() == ConstraintViolationException.ConstraintKind.UNIQUE) {
+            return ResponseEntity.
+                    status(GenericError.CONFLICT.getStatus()).
+                    body(ApiResponse.error(GenericError.CONFLICT.getMessage()));
+        }
+        return handleUnexpected();
     }
 
     // 예기치 못한 오류 500 으로 일반화
