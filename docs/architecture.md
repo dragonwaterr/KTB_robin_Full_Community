@@ -130,9 +130,13 @@ flowchart TD
     A["서비스·필터에서 예외 발생"] --> B{"예외 종류"}
     B -->|"ApiException"| C["handleCustomException<br/>ErrorCode의 status와 message"]
     B -->|"MethodArgumentNotValidException<br/>@Valid 실패"| D["handleValidAnnotationError<br/>400 invalid_request"]
+    B -->|"DataIntegrityViolationException"| U{"원인이 UNIQUE 위반?"}
+    U -->|"예"| V["handleDataIntegrityViolation<br/>409 duplicate_resource"]
+    U -->|"아니오"| E
     B -->|"그 외 Exception"| E["handleUnexpected<br/>500 internal_server_error"]
     C --> R["ApiResponse.error(message)"]
     D --> R
+    V --> R
     E --> R
     F["보안 필터 단계의 인증·인가 실패"] --> G["CustomAuthenticationEntryPoint 401<br/>CustomAccessDeniedHandler 403"]
     G --> R
@@ -141,6 +145,7 @@ flowchart TD
 - 도메인 오류는 `ErrorCode`를 구현한 enum(`UserError`, `AuthError`, `PostError`, `CommentError`, `FileError`, `GenericError`)을 담아 `ApiException`으로 던진다.
 - `ErrorCode`는 `HttpStatus`와 소문자 snake_case 메시지(예: `existing_email`, `invalid_file_type`)를 가진다.
 - 응답 본문은 항상 `{"message": ..., "data": null}` 형태다(`ApiResponse.error`).
+- `DataIntegrityViolationException`은 원인이 Hibernate `ConstraintViolationException`이고 종류가 `UNIQUE`일 때만 409 `duplicate_resource`(`GenericError.CONFLICT`)로 응답한다. 컬럼 길이 초과처럼 같은 예외로 번역되는 다른 위반은 500이다.
 
 ## 5. 트랜잭션과 삭제
 
