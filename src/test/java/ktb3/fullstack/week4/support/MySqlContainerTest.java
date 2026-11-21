@@ -2,8 +2,14 @@ package ktb3.fullstack.week4.support;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MySQLContainer;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * 실제 MySQL(Testcontainers) 위에서 도는 통합 테스트의 베이스 클래스.
@@ -13,9 +19,7 @@ import org.testcontainers.containers.MySQLContainer;
 @TestPropertySource(properties = {
         // 테스트 전용 값 (Base64, 디코딩 시 32바이트)
         "jwt.access-secret=dGVzdC1hY2Nlc3Mtc2VjcmV0LWtleS0zMi1ieXRlcy0hIQ==",
-        "jwt.refresh-secret=dGVzdC1yZWZyZXNoLXNlY3JldC1rZXktMzItYnl0ZXMtIQ==",
-        "file.profileDir=build/test-uploads/profile/",
-        "file.postDir=build/test-uploads/post/"
+        "jwt.refresh-secret=dGVzdC1yZWZyZXNoLXNlY3JldC1rZXktMzItYnl0ZXMtIQ=="
 })
 public abstract class MySqlContainerTest {
 
@@ -26,5 +30,15 @@ public abstract class MySqlContainerTest {
 
     static {
         MYSQL.start();
+    }
+
+    // 이미지 URL을 저장 경로의 "static" 뒤 부분으로 만들므로 업로드 경로에 static이 있어야 한다
+    @DynamicPropertySource
+    static void uploadDirs(DynamicPropertyRegistry registry) throws IOException {
+        Path root = Files.createTempDirectory("gnzn-test").resolve("static");
+        Path profile = Files.createDirectories(root.resolve("profile"));
+        Path post = Files.createDirectories(root.resolve("post"));
+        registry.add("file.profileDir", () -> profile.toAbsolutePath() + "/");
+        registry.add("file.postDir", () -> post.toAbsolutePath() + "/");
     }
 }
