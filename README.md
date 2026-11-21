@@ -39,6 +39,10 @@
 | `DB_PASSWORD` | MySQL root 비밀번호 |
 | `JWT_ACCESS_SECRET` | 액세스 토큰 서명 키 (Base64, 256비트 이상) |
 | `JWT_REFRESH_SECRET` | 리프레시 토큰 서명 키 (Base64, 256비트 이상, 액세스 키와 다른 값) |
+| `FILE_PROFILEDIR` | 프로필 이미지 저장 디렉터리 (절대경로, `/`로 끝남. 예: `<프로젝트>/src/main/resources/static/assets/images/profile/`) |
+| `FILE_POSTDIR` | 게시글 이미지 저장 디렉터리 (절대경로, `/`로 끝남. 예: `<프로젝트>/src/main/resources/static/assets/images/post/`) |
+
+이미지 URL은 저장 경로에서 `static` 뒤 부분으로 만들어지므로 두 디렉터리는 `static/` 아래에 둡니다.
 
 서명 키는 `openssl rand -base64 32` 로 각각 생성합니다.
 
