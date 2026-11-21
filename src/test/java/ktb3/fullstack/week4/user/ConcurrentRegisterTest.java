@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -28,6 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /** 같은 이메일로 동시에 가입하면 사전 검사를 함께 통과하므로 마지막 방어선은 DB UNIQUE다. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+// 풀(기본 10)보다 동시 요청이 많으면 id 생성기(*_seq 테이블)가 별도 커넥션을 기다리며 막힌다.
+// 이 테스트는 UNIQUE → 409 동작만 보기 위해 풀을 동시 요청 수보다 크게 둔다
+@TestPropertySource(properties = "spring.datasource.hikari.maximum-pool-size=110")
 class ConcurrentRegisterTest extends MySqlContainerTest {
 
     static final int N = 100;
