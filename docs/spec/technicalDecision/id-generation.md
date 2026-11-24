@@ -49,7 +49,7 @@
 | 채번 전용 커넥션 풀 분리 | 업무 풀과 분리된 작은 DataSource로 `*_seq`를 갱신하는 커스텀 생성기 | 교착 조건은 없어지지만 커스텀 생성기와 DataSource 이중화를 유지해야 한다 |
 | 애플리케이션 채번 (TSID 등) | DB 없이 시간순 64비트 id 생성 | 교착 조건은 없어지지만 id 체계와 라이브러리가 바뀐다 |
 
-`SEQUENCE`를 택했던 이유는 쓰기 지연과 배치 insert였다. 배치 insert는 설정(`hibernate.jdbc.batch_size`)이 없어 쓰이지 않고 있었고, `IDENTITY`로 바꿔도 SQL 개수는 같다(INSERT 시점만 `persist` 즉시로 바뀐다). 그래서 프레임워크 기본 기능만으로 끝나는 `IDENTITY`를 선택했다.
+`SEQUENCE`는 나중에 배치 insert를 쓸 수 있다는 기대로 택했지만, 배치 설정(`hibernate.jdbc.batch_size`)을 둔 적이 없어 실제로 쓰인 적은 없다. `IDENTITY`로 바꿔도 SQL 개수는 같다(INSERT 시점만 `persist` 즉시로 바뀐다). 그래서 프레임워크 기본 기능만으로 끝나는 `IDENTITY`를 선택했다.
 
 ## 4. 변경
 
