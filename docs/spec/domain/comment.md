@@ -46,7 +46,7 @@
   1. 회원 조회
   2. `modifiedBefore` 또는 `cursorId`가 없으면 `time = 현재 + 100년`, `cursorId = Long.MAX_VALUE`로 처음부터 조회
   3. `CommentRepository#findByModifiedAtLessThan` — `modifiedAt < :time` 또는 (`modifiedAt = :time` 이고 `id < :cursorId`), 정렬은 `modifiedAt DESC, id DESC`, `Slice`로 `limit`개
-  4. 댓글마다 작성자 닉네임, 본문, 작성자 프로필 이미지 URL(`getProfileImages().getFirst()`), `modified_at` 구성
+  4. 댓글마다 작성자 닉네임, 본문, 작성자 대표 프로필 이미지 URL(`User#getPrimaryProfileImage`), `modified_at` 구성
   5. `next_cursor_id` = 응답의 마지막 댓글 id − 1 (비어 있으면 null), `has_next` = `Slice#hasNext`
 - 응답: `message = comments_fetch_success`, `data` = `CommentListResponse`
 

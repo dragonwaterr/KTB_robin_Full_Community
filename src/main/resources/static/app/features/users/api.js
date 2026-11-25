@@ -33,12 +33,6 @@ export async function uploadProfileImage(file) {
     return res?.data; // { image_url: ... } (컨트롤러에선 ProfileImageUrlResponse)
 }
 
-// 프로필 이미지 삭제
-export async function deleteProfileImage() {
-    const res = await apiJson("/users/me/profile-image", { method: "DELETE" });
-    return res?.data; // { image_url: ... } (삭제된 URL)
-}
-
 // 탈퇴
 export async function withdraw() {
     await apiJson("/users/me", { method: "DELETE" });

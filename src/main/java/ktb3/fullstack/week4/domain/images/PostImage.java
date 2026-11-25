@@ -22,6 +22,9 @@ public class PostImage extends Image {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Column(name = "is_primary")
+    private boolean isPrimary;
+
 
     public void linkPost(Post post) { // 연관관계 편의 메소드
         this.post = post;

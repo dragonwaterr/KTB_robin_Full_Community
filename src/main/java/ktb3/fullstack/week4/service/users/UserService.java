@@ -52,6 +52,7 @@ public class UserService {
         ProfileImage profileImage = imageDomainBuilder.buildProfileImage(user, saved);
 
         profileImageRepository.save(profileImage);
+        user.changePrimaryProfileImage(profileImage);
         userRepository.save(user);
     }
 
@@ -96,27 +97,13 @@ public class UserService {
         if (!profileImages.isEmpty()) {
             for (ProfileImage image : profileImages) {
                 image.adjustDisplayOrder(); // displayOrder 순서 1씩 뒤로 밀기
-                if (image.isPrimary()) {
-                    image.makeToNonPrimary(); // 이제 대표사진이 아니다
-                }
             }
         }
 
         profileImage.linkUser(user); // 연관관계 편의 메소드
         profileImageRepository.save(profileImage); // 더티체킹
+        userRepository.updatePrimaryProfileImage(userId, profileImage);
         return saved;
-    }
-
-    // 프로필 이미지 삭제
-    @Transactional
-    public String deleteProfileImage(long userId) {
-        errorCheckService.checkCanNotFoundUser(userId);
-        ProfileImage primaryProfileImage = profileImageRepository.findByUserIdAndIsPrimaryIsTrue(userId);
-        primaryProfileImage.deleteEntity();
-        // 프로필 이미지 1장 : 삭제 -> 즉시 새로운 사진 등록 필요
-        // 프로필 이미지 2장 이상 : 삭제 -> 즉시 프로필 사진 불러오기 필요
-
-        return primaryProfileImage.getImageUrl();
     }
 
     // 이후개발) 프로필 사진 history 에서 선택한 이미지만 삭제

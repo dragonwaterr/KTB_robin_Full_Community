@@ -41,8 +41,8 @@
 - 처리 로직 (`UserService#register`)
   1. `AvailabilityService#checkRegisterAvailability` — 이메일 중복, 닉네임 중복, 이미지 검사 순서. 중복 검사는 탈퇴 회원의 값도 포함한다(4.2)
   2. 비밀번호 인코딩, `UserDomainBuilder#buildUser`로 회원 생성
-  3. 이미지 저장, `ImageDomainBuilder#buildProfileImage`로 대표 이미지 생성
-  4. 프로필 이미지·회원 저장
+  3. 이미지 저장, `ImageDomainBuilder#buildProfileImage`로 프로필 이미지 생성
+  4. 프로필 이미지 저장 → 회원의 대표로 지정(`User#changePrimaryProfileImage`) → 회원 저장
 - 응답: `message = register_success`
 - 오류: 400 `invalid_request`(`@Valid` 실패), 409 `existing_email`, 409 `existing_nickname`, 409 `duplicate_resource`(동시 요청이 중복 검사를 함께 통과해 UNIQUE 제약에 걸린 경우), 404 `image_not_found`(이미지 없음), 400 `image_size_too_big`, 400 `file_type_omitted`, 400 `invalid_file_type`
 

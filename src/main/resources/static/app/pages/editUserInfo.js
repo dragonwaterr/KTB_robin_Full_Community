@@ -1,5 +1,4 @@
 import {
-    deleteProfileImage,
     fetchMyEditInfo,
     updateNickname,
     uploadProfileImage,
@@ -163,22 +162,6 @@ function bindEvents() {
         const file = $file.files && $file.files[0];
         if (!file) return;
         try {
-            // 기존 이미지가 있으면 먼저 삭제 호출 -> 그 다음에 새 이미지 등록
-            try {
-                const existing = localStorage.getItem("profile_image_url");
-                if (existing) {
-                    await deleteProfileImage();
-                    // 삭제 후 클라이언트 캐시/저장값 제거
-                    try {
-                        localStorage.removeItem("profile_image_url");
-                    } catch (_) {
-                    }
-                }
-            } catch (delErr) {
-                // 삭제 실패여도 새 이미지 업로드를 시도하도록 경고만 남김
-                console.warn("기존 프로필 이미지 삭제 실패:", delErr);
-            }
-
             const res = await uploadProfileImage(file); // { image_url }
             const url = res?.profileImageUrl || res?.image_url || "";
             if ($avatarTrigger) {

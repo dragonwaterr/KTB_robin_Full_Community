@@ -16,7 +16,6 @@ import ktb3.fullstack.week4.dto.auth.LoginResponse;
 import ktb3.fullstack.week4.dto.auth.LoginRequest;
 import ktb3.fullstack.week4.dto.auth.RefreshResponse;
 import ktb3.fullstack.week4.repository.auth.RefreshTokenRepository;
-import ktb3.fullstack.week4.repository.images.ProfileImageRepository;
 import ktb3.fullstack.week4.repository.users.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,6 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
-    private final ProfileImageRepository profileImageRepository;
     private final AppPasswordEncoder passwordEncoder;
 
     @Transactional
@@ -80,7 +78,7 @@ public class AuthService {
         CookieUtil.addHttpOnlyCookie(response, REFRESH_COOKIE_NAME, refresh, (int) tokenProvider.getRefreshExpireSeconds());
 
         // 프로필 이미지 url 가져오기
-        String profileImageUrl = profileImageRepository.findByUserIdAndIsPrimaryIsTrue(user.getId()).getImageUrl();
+        String profileImageUrl = user.getPrimaryProfileImage().getImageUrl();
 
         return new LoginResponse(
                 profileImageUrl,

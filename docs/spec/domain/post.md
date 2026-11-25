@@ -82,7 +82,7 @@
 |---|---|
 | 게시글 id·제목·본문·수정일시 | `Post p` |
 | 작성자 id·닉네임 | `JOIN p.user u` |
-| 작성자 대표 프로필 이미지 | `LEFT JOIN ProfileImage pi ON pi.user.id = u.id AND pi.isPrimary = true` |
+| 작성자 대표 프로필 이미지 | `LEFT JOIN u.primaryProfileImage pi` |
 | 조회수 | `LEFT JOIN p.postView pv` |
 | 좋아요 수 | 서브쿼리 `COUNT(Like) WHERE isLiked = true` |
 | 댓글 수 | 서브쿼리 `COUNT(Comment)` |

@@ -12,7 +12,6 @@ import ktb3.fullstack.week4.domain.users.User;
 import ktb3.fullstack.week4.dto.posts.*;
 import ktb3.fullstack.week4.repository.comments.CommentRepository;
 import ktb3.fullstack.week4.repository.images.PostImageRepository;
-import ktb3.fullstack.week4.repository.images.ProfileImageRepository;
 import ktb3.fullstack.week4.repository.likes.LikeRepository;
 import ktb3.fullstack.week4.repository.posts.PostRepository;
 import ktb3.fullstack.week4.repository.posts.PostViewRepository;
@@ -46,7 +45,6 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final PostViewRepository postViewRepository;
     private final PostImageRepository postImageRepository;
-    private final ProfileImageRepository profileImageRepository;
 
     private final PostDeleteFacade postDeleteFacade;
     private final PostImageService postImageService;
@@ -96,7 +94,7 @@ public class PostService {
 
                     User author = post.getUser();
                     String authorName = author.getNickname();
-                    String authorProfileImageUrl = profileImageRepository.findByUserIdAndIsPrimaryIsTrue(author.getId()).getImageUrl();
+                    String authorProfileImageUrl = author.getPrimaryProfileImage().getImageUrl();
 
                     return new PostListResponse.PostBriefInfo(
                             post.getId(),

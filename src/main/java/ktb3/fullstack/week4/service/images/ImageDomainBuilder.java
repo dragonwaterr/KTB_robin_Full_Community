@@ -12,7 +12,6 @@ public class ImageDomainBuilder {
     public ProfileImage buildProfileImage(User user, String profileImageUrl) {
         ProfileImage image = ProfileImage.builder()
                 .imageUrl(profileImageUrl)
-                .isPrimary(true)
                 .displayOrder(1)
                 .build();
 

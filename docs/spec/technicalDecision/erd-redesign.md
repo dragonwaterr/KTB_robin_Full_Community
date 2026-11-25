@@ -37,7 +37,7 @@ JPA 도입 전에 ERD를 다시 설계하면서 내린 결정을 정리한다. �
 
 **선택: 별도 테이블** — 여러 장 등록 요구가 생기면 컬럼이 계속 늘어나는 구조를 피한다.
 
-현재 코드: `profile_image`, `post_image` 테이블. 공통 부모 `Image`(`image_url`, `is_primary`, `display_order`). 상세는 [image.md](../domain/image.md).
+현재 코드: `profile_image`, `post_image` 테이블. 공통 부모 `Image`(`image_url`, `display_order`), `is_primary`는 `post_image`에만 있고 대표 프로필 이미지는 `users.primary_profile_image_id`가 가리킨다. 상세는 [image.md](../domain/image.md).
 
 ## 4. 좋아요 기본키
 
