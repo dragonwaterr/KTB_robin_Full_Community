@@ -115,6 +115,17 @@ class TokenRefreshTest extends MySqlContainerTest {
         assertThat(message(res)).isEqualTo("refresh_token_expired");
     }
 
+    @Test
+    void 이미_로그아웃한_쿠키로_다시_로그아웃하면_401_refresh_token_expired() {
+        String cookie = loginRefreshCookie();
+        post("/auth/logout", null, cookie);
+
+        ResponseEntity<String> res = post("/auth/logout", null, cookie);
+
+        assertThat(res.getStatusCode().value()).isEqualTo(401);
+        assertThat(message(res)).isEqualTo("refresh_token_expired");
+    }
+
     String expiredAccessToken() {
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(ACCESS_SECRET));
         Instant past = Instant.now().minusSeconds(60);

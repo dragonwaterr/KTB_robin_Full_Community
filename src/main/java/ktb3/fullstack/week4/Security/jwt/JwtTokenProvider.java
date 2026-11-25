@@ -2,6 +2,7 @@ package ktb3.fullstack.week4.Security.jwt;
 
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -84,6 +85,18 @@ public class JwtTokenProvider {
 
     public boolean validateRefreshToken(String token) {
         return validate(token, refreshKey);
+    }
+
+    // 서명은 맞고 만료만 된 경우 (서명이 틀리면 만료 검사 전에 다른 예외)
+    public boolean isExpiredAccessToken(String token) {
+        try {
+            Jwts.parser().verifyWith((SecretKey) accessKey).build().parseSignedClaims(token);
+            return false;
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private boolean validate(String token, Key key) {
