@@ -49,6 +49,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -497,6 +498,22 @@ public class UserControllerTest {
         // then
         result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("invalid_file_type"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("지원하지 않는 메서드: 경로는 있지만 메서드가 다르면 405 Method Not Allowed 와 허용 메서드를 반환한다")
+    @WithMockCustomUser
+    void method_not_allowed() throws Exception {
+        // when
+        ResultActions result = mockMvc.perform(
+                delete("/users/me/profile-image")
+        );
+
+        // then
+        result.andExpect(status().isMethodNotAllowed())
+                .andExpect(header().string("Allow", "PATCH"))
+                .andExpect(jsonPath("$.message").value("method_not_allowed"))
                 .andDo(print());
     }
 
