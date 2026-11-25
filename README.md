@@ -19,6 +19,7 @@
 | 2026-11-21 | 탈퇴 회원 이메일·닉네임 재사용과 동시 가입이 500 대신 409로 응답 (동시 가입 N=100: 500×99 → 409×99) | [#9](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/9) |
 | 2026-11-21 | 기본키 생성 전략을 IDENTITY로 바꿔 동시 쓰기 시 커넥션 풀 교착 제거 (기본 풀, 동시 가입 N=100: 500×91 → 0) | [#10](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/10) |
 | 2026-11-25 | 대표 프로필 이미지를 회원이 가리키도록 바꿔, 한 회원의 이미지 상태 때문에 로그인·게시글 목록이 다른 회원에게까지 500이 되던 문제 제거 (같은 회원 동시 교체 10×10: 실패 10/10 → 0/10) | [#14](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/14) |
+| 2026-11-25 | 액세스 토큰 만료(1시간) 후 재로그인 없이는 아무 API도 쓸 수 없던 문제 수정: 재발급·로그아웃을 리프레시 쿠키로 인증하고, 만료 응답을 FE 재시도 조건(`access_token_expired`)과 일치 | [#20](https://github.com/dragonwaterr/KTB_robin_Full_Community/pull/20) |
 
 ## 제공 기능
 - 🔐 JWT 로그인/리프레시, 로그아웃
