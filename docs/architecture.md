@@ -82,7 +82,7 @@ sequenceDiagram
 | 대상 | 규칙 |
 |---|---|
 | `OPTIONS /**` | 허용 |
-| `/auth/login`, `/availability/**` | 허용 |
+| `/auth/login`, `/auth/refresh`, `/auth/logout`, `/availability/**` | 허용 (재발급·로그아웃은 리프레시 쿠키로 인증) |
 | `POST /users` | 허용 |
 | `/swagger-ui/**`, `/v3/api-docs/**` | 허용 |
 | `/app/**`, `/css/**`, `/html/**`, `/assets/**` | 허용 |
@@ -99,14 +99,16 @@ sequenceDiagram
     participant Ctx as SecurityContext
 
     C->>F: 요청
-    F->>F: shouldNotFilter (OPTIONS, /auth/login, /availability/, POST /users 는 건너뜀)
+    F->>F: shouldNotFilter (OPTIONS, /auth/login, /auth/refresh, /auth/logout, /availability/, POST /users 는 건너뜀)
     F->>P: resolveAccessTokenFromAuthorization
     alt Authorization 헤더가 없거나 "Bearer "로 시작하지 않음
         F->>F: 인증 정보 없이 다음 필터로 진행
     else 토큰 있음
         F->>P: validateToken
-        alt 검증 실패
-            F->>F: BadCredentialsException 발생
+        alt 만료 (서명은 유효)
+            F-->>C: 401 access_token_expired (HandlerExceptionResolver)
+        else 위조·형식 오류
+            F-->>C: 401 invalid_access_token (HandlerExceptionResolver)
         else 검증 성공
             F->>P: getAuthentication
             P->>U: loadUserByUsername(userId)
@@ -121,7 +123,8 @@ sequenceDiagram
 - 액세스 토큰은 `Authorization: Bearer <token>` 헤더로 받는다(`JwtTokenProvider#resolveAccessTokenFromAuthorization`).
 - 리프레시 토큰은 쿠키로 받는다(`JwtTokenProvider#resolveRefreshTokenFromCookies`, `CookieUtil`).
 - 서명 키는 `jwt.access-secret`, `jwt.refresh-secret` 설정으로 주입된다(`JwtTokenProvider` 생성자).
-- 필터 안에서 `JwtException`은 `BadCredentialsException`으로 감싸 던진다. `ServletException`·`IOException`은 `HandlerExceptionResolver`로 넘겨 `ApiException(AuthError.INVALID_ACCESS_TOKEN)`으로 처리한다.
+- 검증에 실패한 토큰은 `JwtTokenProvider#isExpiredAccessToken`으로 만료와 위조·형식 오류를 구분해 `HandlerExceptionResolver`로 `ApiException(AuthError.ACCESS_TOKEN_EXPIRED)` 또는 `ApiException(AuthError.INVALID_ACCESS_TOKEN)`을 넘긴다. FE(`apiClient.js#requestWithAuthRetry`)는 401 `access_token_expired`일 때만 `/auth/refresh`로 재발급받고 원래 요청을 다시 보낸다.
+- 인증 객체를 만들 때의 `JwtException`은 `BadCredentialsException`으로 감싸 던진다. `ServletException`·`IOException`은 `HandlerExceptionResolver`로 넘겨 `ApiException(AuthError.INVALID_ACCESS_TOKEN)`으로 처리한다.
 
 ## 4. 예외 처리 흐름
 
