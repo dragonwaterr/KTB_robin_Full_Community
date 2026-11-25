@@ -147,24 +147,10 @@ public class AuthService {
             throw new ApiException(GenericError.INVALID_REQUEST);
         }
 
-        String refresh = refreshOpt.get();
-
-        // 리프레시 토큰 검증
-        if (!tokenProvider.validateRefreshToken(refresh)) {
-            CookieUtil.deleteCookie(response, REFRESH_COOKIE_NAME);
-            throw new ApiException(AuthError.REFRESH_TOKEN_EXPIRED);
-        }
-
-        long userId = tokenProvider.getUserIdFromRefreshToken(refresh)
-                .orElseThrow(() -> new ApiException(AuthError.REFRESH_TOKEN_EXPIRED));
-
-        RefreshToken token = refreshTokenRepository.findByUserId(userId);
-        if (token == null) { // 로그아웃 등으로 저장된 토큰이 없다
-            throw new ApiException(AuthError.REFRESH_TOKEN_EXPIRED);
-        }
-
-        // 저장소에서 무효화
-        refreshTokenRepository.delete(token);
+        // 무효하거나 이미 폐기된 토큰이어도 로그아웃은 성공으로 본다 (폐기할 것이 없을 뿐이다)
+        tokenProvider.getUserIdFromRefreshToken(refreshOpt.get())
+                .map(refreshTokenRepository::findByUserId)
+                .ifPresent(refreshTokenRepository::delete);
 
         // 쿠키 삭제
         CookieUtil.deleteCookie(response, REFRESH_COOKIE_NAME);

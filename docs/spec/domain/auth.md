@@ -78,11 +78,10 @@
 - 요청: 본문 없음. `refresh_token` 쿠키
 - 처리 로직 (`AuthService#logout`)
   1. 쿠키가 없으면 `GenericError.INVALID_REQUEST`
-  2. 리프레시 검증 실패 시 쿠키를 삭제하고 `AuthError.REFRESH_TOKEN_EXPIRED`
-  3. 토큰의 `subject`에서 회원 id를 읽고, 저장된 리프레시 토큰을 삭제. 저장된 토큰이 없으면(이미 로그아웃) `AuthError.REFRESH_TOKEN_EXPIRED`
-  4. 쿠키 삭제 (`CookieUtil#deleteCookie`)
+  2. 토큰에서 회원 id를 읽을 수 있으면 저장된 리프레시 토큰을 삭제한다. 토큰이 무효하거나 저장된 토큰이 없으면(이미 로그아웃) 삭제할 것이 없을 뿐 오류로 보지 않는다
+  3. 쿠키 삭제 (`CookieUtil#deleteCookie`)
 - 응답: `message = logout_success`
-- 오류: 400 `invalid_request`, 401 `refresh_token_expired`
+- 오류: 400 `invalid_request`
 
 ### 4.4 인증이 필요한 요청의 검증
 

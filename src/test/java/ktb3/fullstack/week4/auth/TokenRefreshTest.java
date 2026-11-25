@@ -116,14 +116,24 @@ class TokenRefreshTest extends MySqlContainerTest {
     }
 
     @Test
-    void 이미_로그아웃한_쿠키로_다시_로그아웃하면_401_refresh_token_expired() {
+    void 이미_로그아웃한_쿠키로_다시_로그아웃해도_성공한다() {
         String cookie = loginRefreshCookie();
         post("/auth/logout", null, cookie);
 
         ResponseEntity<String> res = post("/auth/logout", null, cookie);
 
-        assertThat(res.getStatusCode().value()).isEqualTo(401);
-        assertThat(message(res)).isEqualTo("refresh_token_expired");
+        assertThat(res.getStatusCode().value()).isEqualTo(200);
+        assertThat(message(res)).isEqualTo("logout_success");
+    }
+
+    @Test
+    void 무효한_리프레시_쿠키로_로그아웃해도_성공하고_쿠키를_지운다() {
+        ResponseEntity<String> res = post("/auth/logout", null, "refresh_token=not-a-jwt");
+
+        assertThat(res.getStatusCode().value()).isEqualTo(200);
+        assertThat(message(res)).isEqualTo("logout_success");
+        assertThat(res.getHeaders().get(HttpHeaders.SET_COOKIE))
+                .anyMatch(c -> c.startsWith("refresh_token=;") && c.contains("Max-Age=0"));
     }
 
     String expiredAccessToken() {
