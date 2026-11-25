@@ -65,7 +65,6 @@ CREATE TABLE `post_view` (
 CREATE TABLE `profile_image` (
   `deleted` bit(1) DEFAULT NULL,
   `display_order` int DEFAULT NULL,
-  `is_primary` bit(1) DEFAULT NULL,
   `created_at` datetime(6) NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `modified_at` datetime(6) NOT NULL,
@@ -92,9 +91,12 @@ CREATE TABLE `users` (
   `hashed_password` varchar(255) DEFAULT NULL,
   `nickname` varchar(255) DEFAULT NULL,
   `role` varchar(10) DEFAULT NULL,
+  `primary_profile_image_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK6dotkott2kjsp8vw4d0m25fb7` (`email`),
-  UNIQUE KEY `UK2ty1xmrrgtn89xt7kyxx6ta7h` (`nickname`)
+  UNIQUE KEY `UK2ty1xmrrgtn89xt7kyxx6ta7h` (`nickname`),
+  UNIQUE KEY `uk_users_primary_profile_image` (`primary_profile_image_id`),
+  CONSTRAINT `fk_users_primary_profile_image` FOREIGN KEY (`primary_profile_image_id`) REFERENCES `profile_image` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

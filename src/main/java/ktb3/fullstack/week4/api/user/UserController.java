@@ -80,15 +80,4 @@ public class UserController implements UserApi {
         );
         return ApiResponse.ok(reponse, "profile_image_upload_success");
     }
-
-    @Override
-    @AccessTokenExpireResponse
-    @DeleteMapping("/me/profile-image")
-    public ApiResponse<ProfileImageUrlResponse> removeProfileImage(
-            @AuthenticationPrincipal SecurityUser user) {
-        ProfileImageUrlResponse reponse = new ProfileImageUrlResponse(
-                userService.deleteProfileImage(user.getId())
-        );
-        return ApiResponse.ok(reponse, "profile_image_delete_success");
-    }
 }

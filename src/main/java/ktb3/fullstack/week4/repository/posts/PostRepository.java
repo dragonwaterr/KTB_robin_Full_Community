@@ -35,7 +35,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ") " +
             "FROM Post p " +
             "JOIN p.user u " +
-            "LEFT JOIN ProfileImage pi ON pi.user.id = u.id AND pi.isPrimary = true " +
+            "LEFT JOIN u.primaryProfileImage pi " +
             "LEFT JOIN p.postView pv " +
             "WHERE p.id = :postId")
     Optional<PostDetailDto> findPostDetailByIdAndUserId(@Param("postId") Long postId, @Param("userId") Long userId);

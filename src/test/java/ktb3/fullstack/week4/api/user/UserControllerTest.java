@@ -501,28 +501,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("프로필 이미지 삭제 성공 : 프로필 이미지를 삭제하면 200 OK 와 삭제된 이미지 URL을 반환한다")
-    @WithMockCustomUser
-    void remove_profile_image_success() throws Exception {
-        // given
-        String deletedUrl = "/assets/images/profile/deleted.jpeg";
-        given(userService.deleteProfileImage(TEST_USER_ID)).willReturn(deletedUrl);
-
-        // when
-        ResultActions result = mockMvc.perform(
-                delete("/users/me/profile-image")
-        );
-
-        // then
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("profile_image_delete_success"))
-                .andExpect(jsonPath("$.data.profileImageUrl").value(deletedUrl))
-                .andDo(print());
-
-        verify(userService).deleteProfileImage(TEST_USER_ID);
-    }
-
-    @Test
     @DisplayName("인증 실패: 인증에 실패하면 401 Unauthorized 를 반환한다.")
     @WithMockCustomUser
     void authentication_fail() throws Exception {

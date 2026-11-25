@@ -17,18 +17,11 @@ public abstract class Image extends SoftDeletetionEntity {
     @Column(name = "image_url", unique = true)
     protected String imageUrl;
 
-    @Column(name = "is_primary")
-    protected boolean isPrimary;
-
     @Column(name = "display_order")
     protected int displayOrder;
 
 
     public void adjustDisplayOrder() {
         this.displayOrder += 1;
-    }
-
-    public void makeToNonPrimary() {
-        this.isPrimary = false;
     }
 }

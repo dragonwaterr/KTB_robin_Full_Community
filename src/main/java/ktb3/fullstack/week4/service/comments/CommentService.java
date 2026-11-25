@@ -63,7 +63,7 @@ public class CommentService {
                         comment.getId(),
                         comment.getUser().getNickname(),
                         comment.getContent(),
-                        comment.getUser().getProfileImages().getFirst().getImageUrl(),
+                        comment.getUser().getPrimaryProfileImage().getImageUrl(),
                         comment.getModifiedAt()
                 )).toList();
 

@@ -39,6 +39,10 @@ public class User extends SoftDeletetionEntity {
     @OneToMany(mappedBy = "user")
     private List<ProfileImage> profileImages = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "primary_profile_image_id", nullable = false)
+    private ProfileImage primaryProfileImage;
+
 
     public void changeNickName(String newNickname) {
         nickname = newNickname;
@@ -46,5 +50,9 @@ public class User extends SoftDeletetionEntity {
 
     public void changePassword(String newPassword) {
         hashedPassword = newPassword;
+    }
+
+    public void changePrimaryProfileImage(ProfileImage profileImage) {
+        primaryProfileImage = profileImage;
     }
 }

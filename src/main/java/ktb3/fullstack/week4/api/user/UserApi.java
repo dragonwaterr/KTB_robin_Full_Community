@@ -224,35 +224,4 @@ public interface UserApi {
             @RequestPart(value = "profile_image") MultipartFile newProfileImage,
             @Parameter(hidden = true) @AuthenticationPrincipal SecurityUser user
     );
-
-    @Operation(summary = "프로필 이미지 삭제", description = "등록된 프로필 이미지를 삭제합니다.")
-    @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    content = @Content(mediaType = "application/json", examples = {
-                            @ExampleObject(name = "프로필 이미지 삭제 성공", value = """
-                                {
-                                    "message" : "profile_image_delete_success",
-                                    "data" : {
-                                        "image_url": "http://www.example.com/images/my_image.jpg"
-                                     }
-                                }
-                                """),
-                    })
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    content = @Content(mediaType = "application/json", examples = {
-                            @ExampleObject(name = "해당 사용자를 찾을 수 없습니다.", value = """
-                                {
-                                    "message" : "cannot_found_user",
-                                    "data" : null
-                                }
-                                """),
-                    })
-            ),
-    })
-    ApiResponse<ProfileImageUrlResponse> removeProfileImage(
-            @Parameter(hidden = true) @AuthenticationPrincipal SecurityUser user
-    );
 }
