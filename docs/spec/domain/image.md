@@ -4,12 +4,12 @@
 
 ## 1. 배경
 
-- 프로필 이미지(`profile_image`)와 게시글 이미지(`post_image`)는 공통 부모 `Image`를 상속한다(`image_url`, `is_primary`, `display_order`).
+- 프로필 이미지(`profile_image`)와 게시글 이미지(`post_image`)는 공통 부모 `Image`를 상속한다(`image_url`, `display_order`). `is_primary`는 `PostImage`에만 있다.
 - 파일은 로컬 디렉터리에 저장하고 DB에는 URL 경로를 저장한다.
   - 저장 경로: `file.profileDir` 또는 `file.postDir` + `UUID` + 원본 파일명 (`ProfileImageService#makeImagePathString`, `PostImageService#makeImagePathString`)
   - DB에는 경로 중 `static` 이후 부분을 저장한다 (`UserService`, `PostService`의 `split("static")[1]`)
   - 저장 위치는 정적 리소스 경로 아래라서 `/assets/**`로 제공된다 ([architecture.md](../../architecture.md))
-- 새로 만든 이미지는 `is_primary = true`, `display_order = 1`이다(`ImageDomainBuilder#buildProfileImage`, `#buildPostImage`).
+- 새로 만든 이미지는 `display_order = 1`이다(`ImageDomainBuilder#buildProfileImage`, `#buildPostImage`). 게시글 이미지는 `is_primary = true`로 만들고, 프로필 이미지는 회원의 포인터가 가리켜야 대표가 된다(5.1).
 
 ## 2. 목표가 아닌 것
 
@@ -26,10 +26,10 @@
 | `user_id` / `post_id` | 소유 회원 / 게시글 | |
 | `image_url` | URL 경로 | UNIQUE |
 | `is_primary` | 대표 이미지 여부 (`post_image`만) | |
-
-대표 프로필 이미지는 `profile_image`의 컬럼이 아니라 `users.primary_profile_image_id`(NOT NULL·UNIQUE·FK)가 가리킨다.
 | `display_order` | 표시 순서 | |
 | `created_at`, `modified_at`, `deleted` | 공통 컬럼 | |
+
+대표 프로필 이미지는 `profile_image`의 컬럼이 아니라 `users.primary_profile_image_id`(NOT NULL·UNIQUE·FK)가 가리킨다.
 
 ## 4. 업로드 검사
 
@@ -52,7 +52,7 @@
   2. 파일 저장, 새 `ProfileImage`(`display_order = 1`) 생성
   3. 회원의 기존 프로필 이미지(`findAllByUserId`)마다 `display_order`를 1 올린다
   4. 새 이미지를 회원에 연결(`ProfileImage#linkUser`)하고 저장
-  5. 회원의 대표를 새 이미지로 바꾼다(`UserRepository#updatePrimaryProfileImage`, 포인터 컬럼만 UPDATE)
+  5. 회원의 대표를 새 이미지로 바꾼다(`UserRepository#updatePrimaryProfileImage`, 포인터 컬럼만 UPDATE). 포인터는 `updatable = false`라 닉네임 변경 등 다른 회원 수정이 되돌리지 않는다
 - 응답: `message = profile_image_upload_success`, `data` = `ProfileImageUrlResponse` (`profileImageUrl`)
 - 오류: 404 `cannot_found_user`
 
