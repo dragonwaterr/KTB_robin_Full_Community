@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     void deleteById(Long id);
 
-    // 엔티티 더티 체킹은 users 전 컬럼을 UPDATE해 동시에 바뀐 닉네임 등을 덮어쓰므로 포인터만 갱신한다
+    // 대표 변경은 이 쿼리로만 한다 (User#primaryProfileImage는 updatable = false). 포인터 컬럼만 갱신해 동시에 바뀐 닉네임 등을 덮어쓰지 않는다
     @Modifying
     @Query("update User u set u.primaryProfileImage = :image where u.id = :userId")
     int updatePrimaryProfileImage(@Param("userId") long userId, @Param("image") ProfileImage image);

@@ -40,7 +40,8 @@ public class User extends SoftDeletetionEntity {
     private List<ProfileImage> profileImages = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "primary_profile_image_id", nullable = false)
+    // 더티 체킹은 users 전 컬럼을 UPDATE하므로, 닉네임 변경 등이 그사이 바뀐 대표를 되돌리지 않게 UPDATE에서 뺀다
+    @JoinColumn(name = "primary_profile_image_id", nullable = false, updatable = false)
     private ProfileImage primaryProfileImage;
 
 

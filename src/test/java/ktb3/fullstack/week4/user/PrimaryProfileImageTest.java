@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -47,6 +48,7 @@ class PrimaryProfileImageTest extends MySqlContainerTest {
     @Autowired UserService userService;
     @Autowired UserRepository userRepository;
     @Autowired PostService postService;
+    @Autowired TransactionTemplate transactionTemplate;
 
     UserFixture fixture;
 
@@ -148,6 +150,29 @@ class PrimaryProfileImageTest extends MySqlContainerTest {
         assertThat(get("/posts?after=0&limit=100", tokenB).getStatusCode().value()).isEqualTo(200);
         assertThat(get("/posts/" + postB, tokenB).getStatusCode().value()).isEqualTo(200);
         assertThat(get("/posts/" + postB + "/comments?limit=10", tokenB).getStatusCode().value()).isEqualTo(200);
+    }
+
+    @Test
+    void 닉네임_변경이_그사이_바뀐_대표_이미지를_되돌리지_않는다() throws Exception {
+        String emailA = unique("h") + "@test.com";
+        long userA = register(emailA, unique("h"));
+
+        // 닉네임 트랜잭션이 회원을 읽은 뒤, 커밋 전에 다른 트랜잭션이 대표 이미지를 바꾸고 커밋한다
+        String newUrl = transactionTemplate.execute(status -> {
+            userRepository.findById(userA).orElseThrow().changeNickName(unique("n"));
+            try {
+                return Executors.newSingleThreadExecutor()
+                        .submit(() -> userService.changeProfileImage(userA, UserFixture.pngImage()))
+                        .get();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        });
+
+        String primaryUrl = jdbcTemplate.queryForObject(
+                "SELECT pi.image_url FROM users u JOIN profile_image pi ON pi.id = u.primary_profile_image_id WHERE u.id = ?",
+                String.class, userA);
+        assertThat(primaryUrl).isEqualTo(newUrl);
     }
 
     // 타이밍 의존이라 결정적이지 않다. 교체가 users 행 전체를 덮어쓰는 회귀를 잡는 보조 테스트
