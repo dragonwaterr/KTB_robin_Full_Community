@@ -137,18 +137,7 @@ erDiagram
 - `PostView`와 `RefreshToken`은 `deleted` 컬럼이 없다.
 - 회원 탈퇴의 soft delete는 `UserDeleteFacade#deleteUser`가 한 트랜잭션에서 처리한다([architecture.md](architecture.md) 5장).
 
-## 5. 저장소의 ERD 이미지와 다른 점
+## 5. 저장소의 ERD 이미지
 
-루트의 `ERD_그나저나_robin.png`와 현재 엔티티 매핑의 차이다.
+루트의 `updated_ERD_1125.png`는 위 1~3장의 현재 스키마(2026-11-25, `src/test/resources/schema.sql`)와 대조해 다시 그린 것이다.
 
-| 항목 | 이미지 | 엔티티 매핑 |
-|---|---|---|
-| 회원 테이블 이름 | `user` | `users` (`@Table(name = "users")`) |
-| 좋아요 테이블 이름 | `like` | `likes` (`@Table(name = "likes")`) |
-| 기본키 컬럼 | `userId`, `postId` 등 엔티티별 이름 | 모두 `id` (`PostView`는 `Post`와 기본키 공유) |
-| 수정일시 컬럼 | `comment.updatedAt` 등 `updatedAt`, `modifiedAt` 혼용 | 전부 `modified_at` (`BaseTimeEntity`) |
-| 삭제 여부 컬럼 | `post.isDeleted` 등 `deleted`, `isDeleted` 혼용 | 전부 `deleted` (`SoftDeletetionEntity`) |
-| `refresh_token` 테이블 | 없음 | `RefreshToken` 엔티티 |
-| UNIQUE | 표시 없음 | `users.email`, `users.nickname`, `users.primary_profile_image_id`, `*_image.image_url` |
-| 대표 프로필 이미지 | `profile_image.isPrimary` | `users.primary_profile_image_id`가 가리킴. `profile_image.is_primary` 없음 |
-| 컬럼 길이·타입 | `VARCHAR(100)`, `VARCHAR(26)` 등 표기 | 엔티티는 `role`과 시간 컬럼 외에 길이를 지정하지 않음 |
