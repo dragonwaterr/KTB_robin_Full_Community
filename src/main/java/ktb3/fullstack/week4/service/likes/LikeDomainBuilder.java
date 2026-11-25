@@ -12,7 +12,6 @@ public class LikeDomainBuilder {
         Like like = Like.builder()
                 .isLiked(true)
                 .user(user)
-                .post(post)
                 .build();
 
         like.linkPost(post);

@@ -22,7 +22,6 @@ public class ImageDomainBuilder {
     // 한 장 등록
     public PostImage buildPostImage(Post post, String postImageUrl) {
         PostImage postImage = PostImage.builder()
-                .post(post)
                 .imageUrl(postImageUrl)
                 .displayOrder(1)
                 .isPrimary(true)
