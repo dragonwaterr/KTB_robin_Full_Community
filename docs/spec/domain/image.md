@@ -25,7 +25,9 @@
 | `id` | 기본키 | |
 | `user_id` / `post_id` | 소유 회원 / 게시글 | |
 | `image_url` | URL 경로 | UNIQUE |
-| `is_primary` | 대표 이미지 여부 | |
+| `is_primary` | 대표 이미지 여부 (`post_image`만) | |
+
+대표 프로필 이미지는 `profile_image`의 컬럼이 아니라 `users.primary_profile_image_id`(NOT NULL·UNIQUE·FK)가 가리킨다.
 | `display_order` | 표시 순서 | |
 | `created_at`, `modified_at`, `deleted` | 공통 컬럼 | |
 
@@ -47,19 +49,14 @@
 - 요청: `multipart/form-data` — `profile_image`
 - 처리 로직 (`UserService#changeProfileImage`)
   1. 회원 조회
-  2. 파일 저장, 새 `ProfileImage`(대표, `display_order = 1`) 생성
-  3. 회원의 기존 프로필 이미지(`findAllByUserId`)마다 `display_order`를 1 올리고, 대표였다면 `is_primary = false`로 바꾼다
+  2. 파일 저장, 새 `ProfileImage`(`display_order = 1`) 생성
+  3. 회원의 기존 프로필 이미지(`findAllByUserId`)마다 `display_order`를 1 올린다
   4. 새 이미지를 회원에 연결(`ProfileImage#linkUser`)하고 저장
+  5. 회원의 대표를 새 이미지로 바꾼다(`UserRepository#updatePrimaryProfileImage`, 포인터 컬럼만 UPDATE)
 - 응답: `message = profile_image_upload_success`, `data` = `ProfileImageUrlResponse` (`profileImageUrl`)
 - 오류: 404 `cannot_found_user`
 
-### 5.2 프로필 이미지 삭제 `DELETE /users/me/profile-image`
-
-- 처리 로직 (`UserService#deleteProfileImage`): 회원 조회 → `findByUserIdAndIsPrimaryIsTrue`로 대표 이미지 조회 → `deleteEntity`(soft delete)
-- 응답: `message = profile_image_delete_success`, `data` = 삭제한 이미지 URL
-- 오류: 404 `cannot_found_user`
-
-### 5.3 게시글 이미지
+### 5.2 게시글 이미지
 
 게시글 이미지는 별도 엔드포인트 없이 게시글 API에서 다룬다.
 
@@ -72,7 +69,7 @@
 
 ## 6. 흐름: 프로필 이미지 교체
 
-현재 FE(`editUserInfo.js`)가 호출하는 순서 그대로다. 파일 선택 시 기존 이미지가 있으면(`localStorage`의 `profile_image_url`) 삭제를 먼저 호출하고, 이어서 새 이미지를 등록한다.
+FE(`editUserInfo.js`)는 파일을 선택하면 `PATCH` 한 번만 호출한다. 기존 대표 해제와 새 대표 지정이 한 트랜잭션 안에서 끝나므로 대표가 없는 중간 상태가 없다.
 
 ```mermaid
 sequenceDiagram
@@ -82,17 +79,12 @@ sequenceDiagram
     participant FS as 파일 저장소
     participant DB as DB
 
-    FE->>C: DELETE /users/me/profile-image
-    C->>S: deleteProfileImage(userId)
-    S->>DB: 대표 이미지 조회
-    S->>DB: 대표 이미지 soft delete
-    S-->>FE: 삭제한 이미지 URL
-
     FE->>C: PATCH /users/me/profile-image (profile_image)
     C->>S: changeProfileImage(userId, file)
     S->>FS: 파일 저장 (UUID + 원본 파일명)
-    S->>DB: 기존 이미지 display_order +1, 대표 해제
-    S->>DB: 새 이미지를 대표로 저장
+    S->>DB: 기존 이미지 display_order +1
+    S->>DB: 새 이미지 저장
+    S->>DB: users.primary_profile_image_id = 새 이미지
     S-->>FE: profileImageUrl
 ```
 
@@ -100,6 +92,6 @@ sequenceDiagram
 
 | 용어 | 설명 |
 |---|---|
-| 대표 이미지 | `is_primary = true`인 이미지. 로그인 응답·게시글 목록·상세의 작성자 프로필 이미지로 쓰인다 |
+| 대표 이미지 | 프로필: `users.primary_profile_image_id`가 가리키는 이미지. 로그인 응답·게시글 목록·상세·댓글 목록의 작성자 프로필 이미지로 쓰인다. 게시글: `is_primary = true`인 이미지 |
 | `display_order` | 이미지 표시 순서. 새 이미지는 1이고 기존 이미지는 교체 시 1씩 올라간다 |
 | soft delete | 행을 지우지 않고 `deleted = true`로 표시 |

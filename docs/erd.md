@@ -23,13 +23,14 @@ JPA 엔티티(`ktb3.fullstack.week4.domain`) 매핑을 기준으로 정리한 �
 |---|---|
 | `BaseTimeEntity` | `created_at`, `modified_at` — 둘 다 `DATETIME(6)`, NOT NULL (`@CreatedDate`, `@LastModifiedDate`) |
 | `SoftDeletetionEntity` (`BaseTimeEntity` 상속) | `deleted` (boolean, 기본값 `false`) |
-| `Image` (`SoftDeletetionEntity` 상속) | `image_url`, `is_primary`, `display_order` |
+| `Image` (`SoftDeletetionEntity` 상속) | `image_url`, `display_order` (`is_primary`는 `PostImage`에만 있다) |
 
 ## 2. 관계도
 
 ```mermaid
 erDiagram
     users ||--o{ profile_image : "user_id"
+    users |o--|| profile_image : "primary_profile_image_id (대표)"
     users ||--o{ post : "user_id"
     users ||--o{ comment : "user_id"
     users ||--o{ likes : "user_id"
@@ -45,6 +46,7 @@ erDiagram
         string hashed_password
         string nickname UK
         string role "VARCHAR(10)"
+        long primary_profile_image_id FK,UK "NOT NULL"
         datetime created_at
         datetime modified_at
         boolean deleted
@@ -53,7 +55,6 @@ erDiagram
         long id PK
         long user_id FK
         string image_url UK
-        boolean is_primary
         int display_order
         datetime created_at
         datetime modified_at
@@ -114,6 +115,7 @@ erDiagram
 - 기본키는 `PostView`를 제외한 모든 엔티티가 `@GeneratedValue(strategy = GenerationType.IDENTITY)`(MySQL `AUTO_INCREMENT`)다. `PostView`는 `@MapsId`로 `Post`의 기본키를 그대로 쓴다.
 - `post_view`의 기본키 컬럼 이름은 엔티티 매핑만으로는 확정하지 않았다. 다이어그램의 `post_id`는 연결 대상을 나타낸다.
 - 연관관계는 모두 `@ManyToOne(fetch = LAZY)`이고 `@JoinColumn`으로 `user_id`·`post_id`를 지정한다. `Post#postView`는 `@OneToOne(mappedBy = "post", fetch = LAZY)`다.
+- `User#primaryProfileImage`는 `@OneToOne(fetch = LAZY)` + `@JoinColumn(name = "primary_profile_image_id", nullable = false)`로 회원의 대표 프로필 이미지를 가리킨다. NOT NULL·UNIQUE·FK라 회원마다 대표가 정확히 1장이다.
 - `RefreshToken#userId`는 `Long` 컬럼이고 `User`와의 연관관계 매핑이 없다.
 
 ## 3. UNIQUE 제약
@@ -125,6 +127,7 @@ erDiagram
 | `users` | `email` | `User#email` |
 | `users` | `nickname` | `User#nickname` |
 | `profile_image`, `post_image` | `image_url` | `Image#imageUrl` |
+| `users` | `primary_profile_image_id` | 스키마(`schema.sql`)에만 선언. 엔티티는 `@OneToOne` |
 
 ## 4. soft delete
 
@@ -146,5 +149,6 @@ erDiagram
 | 수정일시 컬럼 | `comment.updatedAt` 등 `updatedAt`, `modifiedAt` 혼용 | 전부 `modified_at` (`BaseTimeEntity`) |
 | 삭제 여부 컬럼 | `post.isDeleted` 등 `deleted`, `isDeleted` 혼용 | 전부 `deleted` (`SoftDeletetionEntity`) |
 | `refresh_token` 테이블 | 없음 | `RefreshToken` 엔티티 |
-| UNIQUE | 표시 없음 | `users.email`, `users.nickname`, `*_image.image_url` |
+| UNIQUE | 표시 없음 | `users.email`, `users.nickname`, `users.primary_profile_image_id`, `*_image.image_url` |
+| 대표 프로필 이미지 | `profile_image.isPrimary` | `users.primary_profile_image_id`가 가리킴. `profile_image.is_primary` 없음 |
 | 컬럼 길이·타입 | `VARCHAR(100)`, `VARCHAR(26)` 등 표기 | 엔티티는 `role`과 시간 컬럼 외에 길이를 지정하지 않음 |
