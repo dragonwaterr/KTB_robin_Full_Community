@@ -1,6 +1,5 @@
 package ktb3.fullstack.week4.service.posts;
 
-import ktb3.fullstack.week4.common.error.codes.FileError;
 import ktb3.fullstack.week4.common.error.codes.GenericError;
 import ktb3.fullstack.week4.common.error.codes.PostError;
 import ktb3.fullstack.week4.common.error.exception.ApiException;
@@ -132,7 +131,7 @@ public class PostService {
 
         String primaryImageUrl = postImageRepository.findByPostIdAndIsPrimaryIsTrue(postId)
                 .map(PostImage::getImageUrl)
-                .orElseThrow(() -> new ApiException(FileError.IMAGE_NOT_FOUND));
+                .orElse(null); // 이미지는 등록 시 선택이라 없을 수 있다
 
         List<String> restImageUrls = postImageRepository.findAllNotPrimaryPostImages(postId)
                 .stream().map(PostImage::getImageUrl)
