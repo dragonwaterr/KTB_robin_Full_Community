@@ -13,6 +13,7 @@ public enum GenericError implements ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "unauthorized"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "forbidden"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "not_found"),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "method_not_allowed"),
     CONFLICT(HttpStatus.CONFLICT, "duplicate_resource"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "internal_server_error");
 
