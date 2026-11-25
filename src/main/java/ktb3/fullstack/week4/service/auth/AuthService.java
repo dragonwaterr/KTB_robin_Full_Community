@@ -106,6 +106,9 @@ public class AuthService {
                 .orElseThrow(() -> new ApiException(AuthError.REFRESH_TOKEN_EXPIRED));
 
         RefreshToken token = refreshTokenRepository.findByUserId(userId);
+        if (token == null) { // 로그아웃 등으로 저장된 토큰이 없다
+            throw new ApiException(AuthError.REFRESH_TOKEN_EXPIRED);
+        }
         if (token.getExpiresAt().isBefore(LocalDateTime.now())) {  // 리프레시 토큰 만료
             refreshTokenRepository.delete(token); // 기존 리프레시 토큰 삭제
 
@@ -156,6 +159,9 @@ public class AuthService {
                 .orElseThrow(() -> new ApiException(AuthError.REFRESH_TOKEN_EXPIRED));
 
         RefreshToken token = refreshTokenRepository.findByUserId(userId);
+        if (token == null) { // 로그아웃 등으로 저장된 토큰이 없다
+            throw new ApiException(AuthError.REFRESH_TOKEN_EXPIRED);
+        }
 
         // 저장소에서 무효화
         refreshTokenRepository.delete(token);

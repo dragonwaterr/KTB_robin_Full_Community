@@ -40,7 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             if(!tokenProvider.validateToken(tokenValue.get())) {
-                throw new BadCredentialsException("Invalid or expired JWT token");
+                // FE는 access_token_expired일 때만 재발급 후 재시도한다. 위조·형식 오류는 재시도 대상이 아니다
+                AuthError error = tokenProvider.isExpiredAccessToken(tokenValue.get())
+                        ? AuthError.ACCESS_TOKEN_EXPIRED
+                        : AuthError.INVALID_ACCESS_TOKEN;
+                handlerExceptionResolver.resolveException(request, response, null, new ApiException(error));
+                return;
             }
 
             // 유효한 토큰이라면 인증객체를 생성 -> SecurityContext 에 저장
@@ -69,6 +74,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 2. 로그인/회원가입/가용성 체크는 JWT 안 봐도 되는 엔드포인트
         if (path.startsWith("/auth/login")
+                || path.startsWith("/auth/refresh")
+                || path.startsWith("/auth/logout")
                 || path.startsWith("/availability/")) {
             return true;
         }

@@ -60,13 +60,13 @@
 
 ### 4.2 액세스 토큰 재발급 `POST /auth/refresh`
 
-- 권한: `SecurityConfig`의 `permitAll` 목록에 없으므로 `anyRequest().hasRole("USER")`가 적용된다
+- 권한: 공개 (`permitAll`, JWT 필터 제외). 액세스 토큰이 만료된 뒤에 호출하는 API라 리프레시 쿠키로 인증한다
 - 요청: 본문 없음. `refresh_token` 쿠키
 - 처리 로직 (`AuthService#refresh`)
   1. 쿠키가 없으면 `GenericError.INVALID_REQUEST`
   2. 리프레시 서명 키로 검증(`validateRefreshToken`). 실패하면 `AuthError.REFRESH_TOKEN_VALIDATION_FAIL`
   3. 토큰의 `subject`에서 회원 id를 읽는다. 없으면 `AuthError.REFRESH_TOKEN_EXPIRED`
-  4. `refreshTokenRepository.findByUserId`로 저장된 토큰 조회
+  4. `refreshTokenRepository.findByUserId`로 저장된 토큰 조회. 없으면(로그아웃 후 등) `AuthError.REFRESH_TOKEN_EXPIRED`
   5. 저장된 `expires_at`이 현재보다 이전이면 저장된 토큰을 삭제하고 새 리프레시 토큰을 발급·저장하며 쿠키를 교체한다
   6. 새 액세스 토큰 발급
 - 응답: `message = access_token_refreshed`, `data` = `RefreshResponse` (`access_token`, `token_type`, `access_expired_in`)
@@ -74,12 +74,12 @@
 
 ### 4.3 로그아웃 `POST /auth/logout`
 
-- 권한: 4.2와 같다 (`anyRequest().hasRole("USER")`)
+- 권한: 4.2와 같다 (공개, 리프레시 쿠키로 인증)
 - 요청: 본문 없음. `refresh_token` 쿠키
 - 처리 로직 (`AuthService#logout`)
   1. 쿠키가 없으면 `GenericError.INVALID_REQUEST`
   2. 리프레시 검증 실패 시 쿠키를 삭제하고 `AuthError.REFRESH_TOKEN_EXPIRED`
-  3. 토큰의 `subject`에서 회원 id를 읽고, 저장된 리프레시 토큰을 삭제
+  3. 토큰의 `subject`에서 회원 id를 읽고, 저장된 리프레시 토큰을 삭제. 저장된 토큰이 없으면(이미 로그아웃) `AuthError.REFRESH_TOKEN_EXPIRED`
   4. 쿠키 삭제 (`CookieUtil#deleteCookie`)
 - 응답: `message = logout_success`
 - 오류: 400 `invalid_request`, 401 `refresh_token_expired`

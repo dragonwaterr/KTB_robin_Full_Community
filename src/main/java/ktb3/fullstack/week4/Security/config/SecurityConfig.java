@@ -53,7 +53,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // preflight 요청은 인증을 거치지 않는다.
-                        .requestMatchers("/auth/login", "/availability/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/refresh", "/auth/logout", "/availability/**").permitAll() // 재발급·로그아웃은 리프레시 쿠키로 인증한다
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
 
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
