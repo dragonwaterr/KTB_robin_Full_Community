@@ -50,4 +50,4 @@
 서명 키는 `openssl rand -base64 32` 로 각각 생성합니다.
 
 ## ERD
-![그나저나 ERD](ERD_그나저나_robin.png)
+![그나저나 ERD](updated_ERD_1125.png)
