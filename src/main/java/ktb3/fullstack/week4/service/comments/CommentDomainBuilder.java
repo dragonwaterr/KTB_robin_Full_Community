@@ -12,7 +12,6 @@ public class CommentDomainBuilder {
         Comment comment = Comment.builder()
                 .content(content)
                 .user(user)
-                .post(post)
                 .build();
 
         comment.linkPost(post);

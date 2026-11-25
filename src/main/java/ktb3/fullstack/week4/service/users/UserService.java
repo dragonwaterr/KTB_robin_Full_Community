@@ -100,8 +100,7 @@ public class UserService {
             }
         }
 
-        profileImage.linkUser(user); // 연관관계 편의 메소드
-        profileImageRepository.save(profileImage); // 더티체킹
+        profileImageRepository.save(profileImage);
         userRepository.updatePrimaryProfileImage(userId, profileImage);
         return saved;
     }

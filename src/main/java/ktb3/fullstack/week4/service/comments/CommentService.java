@@ -39,7 +39,6 @@ public class CommentService {
         User user = errorCheckService.checkCanNotFoundUser(userId);
         Post post = errorCheckService.checkCanNotFoundPost(postId);
         Comment comment = commentDomainBuilder.buildComment(user, post, content);
-        comment.linkPost(post);
         commentRepository.save(comment);
     }
 
