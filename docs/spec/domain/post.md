@@ -65,7 +65,7 @@
   2. `PostRepository#findPostDetailByIdAndUserId`로 `PostDetailDto` 조회. 없으면 `PostError.CANNOT_FOUND_POST`
   3. `PostView#plusViewCount`로 조회수 증가. 응답의 `viewCount`는 조회한 값 + 1
   4. 현재 회원의 좋아요 여부 조회 (`existsByPostIdAndUserIdAndIsLikedTrue`)
-  5. 대표 이미지 URL 조회. 없으면 `FileError.IMAGE_NOT_FOUND`. 나머지 이미지는 `displayOrder` 오름차순
+  5. 대표 이미지 URL 조회. 없으면(이미지 없이 쓴 글) `primary_image_url = null`. 나머지 이미지는 `displayOrder` 오름차순
   6. `isOwner` = 작성자 id와 현재 회원 id 비교
 - 응답: `message = post_fetch_success`, `data` = `PostDetailResponse`
 
@@ -74,7 +74,7 @@
 | `post` | `id`, `title`, `likeCount`, `commentCount`, `viewCount`, `author`, `authorProfileImageUrl`, `modified_at`, `primary_image_url`, `rest_image_urls`, `content` |
 | `isLiked`, `isOwner` | 현재 회원의 좋아요 여부, 작성자 여부 (Java 필드명. JSON 키는 Lombok getter 규칙을 따르며 FE는 `liked`, `owner`로 읽는다) |
 
-- 오류: 400 `invalid_request`, 404 `cannot_found_user`, 404 `cannot_found_post`, 404 `image_not_found`
+- 오류: 400 `invalid_request`, 404 `cannot_found_user`, 404 `cannot_found_post`
 
 `PostDetailDto` 조회 쿼리 (`PostRepository#findPostDetailByIdAndUserId`)
 
